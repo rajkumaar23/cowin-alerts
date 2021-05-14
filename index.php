@@ -75,6 +75,8 @@ try {
         $delete_data = $conn->prepare("DELETE FROM subscriptions WHERE telegram_id = ?");
         $delete_data->execute([$from]);
         $bot->sendMessage($from, "You have successfully unsubscribed.");
+    } else {
+        $bot->sendMessage($from, "Sorry, I don't understand what you mean.");
     }
 } catch (Exception $exception) {
     file_put_contents(
