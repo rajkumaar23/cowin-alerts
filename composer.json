@@ -1,0 +1,12 @@
+{
+    "name": "rajkumaar23/cowin-alerts",
+    "description": "a telegram bot to notify when vaccines are available in a district",
+    "require": {
+        "ext-json": "*",
+        "symfony/dotenv": "^5.2",
+        "ext-curl": "*",
+        "nesbot/carbon": "^2.48",
+        "telegram-bot/api": "^2.3",
+        "ext-pdo": "*"
+    }
+}
