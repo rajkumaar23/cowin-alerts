@@ -16,19 +16,19 @@ $bot = new BotApi($_ENV["BOT_TOKEN"]);
 $db = new database();
 $conn = $db->getConnection();
 
-file_put_contents(
-    "output.log",
-    Carbon::now() . " => Starting the cron" . PHP_EOL, FILE_APPEND
-);
+echo Carbon::now() . " => Starting the cron\n";
 $result = $conn->query("SELECT * FROM subscriptions");
 $result = $result->fetchAll();
 $unique_districts = array_unique(array_column($result, "district_id"));
+echo count($unique_districts) . " unique districts to process\n";
 foreach ($unique_districts as $district) {
+    echo "Processing $district\n";
     $appointments = file_get_contents(
         "https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id=$district&date="
         . date("d-m-Y")
     );
     if (empty($appointments)) {
+        echo "No response from API for $district\n";
         continue;
     }
     $centers = json_decode($appointments)->centers;
@@ -47,6 +47,7 @@ foreach ($unique_districts as $district) {
         }
     }
     if (empty($response_body)) {
+        echo "No centers found for $district\n";
         continue;
     }
     $users = array_column(
@@ -57,6 +58,7 @@ foreach ($unique_districts as $district) {
     );
     foreach ($users as $user) {
         try {
+            echo "Sending alert to $user\n";
             $bot->sendMessage($user, $response_body, "HTML");
         } catch (Exception $exception) {
             file_put_contents(
@@ -66,7 +68,4 @@ foreach ($unique_districts as $district) {
         }
     }
 }
-file_put_contents(
-    "output.log",
-    Carbon::now() . " => Ending the cron" . PHP_EOL, FILE_APPEND
-);
+echo Carbon::now() . " => Ending the cron\n";
