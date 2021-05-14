@@ -16,6 +16,10 @@ $bot = new BotApi($_ENV["BOT_TOKEN"]);
 $db = new database();
 $conn = $db->getConnection();
 
+file_put_contents(
+    "output.log",
+    Carbon::now() . " => Starting the cron" . PHP_EOL, FILE_APPEND
+);
 $result = $conn->query("SELECT * FROM subscriptions");
 $result = $result->fetchAll();
 $unique_districts = array_unique(array_column($result, "district_id"));
@@ -62,3 +66,7 @@ foreach ($unique_districts as $district) {
         }
     }
 }
+file_put_contents(
+    "output.log",
+    Carbon::now() . " => Ending the cron" . PHP_EOL, FILE_APPEND
+);
