@@ -27,6 +27,7 @@ foreach ($unique_districts as $district) {
         "https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id=$district&date="
         . date("d-m-Y")
     );
+    sleep(5);
     if (empty($appointments)) {
         echo "No response from API for $district\n";
         continue;
