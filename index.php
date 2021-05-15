@@ -33,9 +33,7 @@ function starts_with($string, $startString): bool
 try {
     if (starts_with($message, "start")) {
         $res = json_decode(
-            file_get_contents(
-                "https://cdn-api.co-vin.in/api/v2/admin/location/states",
-            )
+            file_get_contents(__DIR__ . '/data/states.json')
         );
         $states = $res->states;
         $message = "";
@@ -46,11 +44,21 @@ try {
         $bot->sendMessage($from, $message);
     } elseif (starts_with($message, "state_")) {
         $state_id = explode("_", $message)[1];
-        $res = json_decode(
-            file_get_contents(
-                "https://cdn-api.co-vin.in/api/v2/admin/location/districts/$state_id",
-            )
-        );
+        $local_file_path = __DIR__ . "/data/$state_id-districts.json";
+        if (file_exists($local_file_path)) {
+            $res = json_decode(
+                file_get_contents($local_file_path)
+            );
+        } else {
+            $res = json_decode(
+                file_get_contents(
+                    "https://cdn-api.co-vin.in/api/v2/admin/location/districts/$state_id",
+                )
+            );
+            if(!empty($res)) {
+                file_put_contents($local_file_path, json_encode($res));
+            }
+        }
         $districts = $res->districts;
         $message = "";
         foreach ($districts as $idx => $district) {
