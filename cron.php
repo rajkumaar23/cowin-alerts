@@ -17,7 +17,7 @@ $db = new database();
 $conn = $db->getConnection();
 
 echo Carbon::now() . " => Starting the cron\n";
-$result = $conn->query("SELECT * FROM subscriptions");
+$result = $conn->query("SELECT * FROM subscriptions WHERE blocked = 0");
 $result = $result->fetchAll();
 $unique_districts = array_unique(array_column($result, "district_id"));
 echo count($unique_districts) . " unique districts to process\n";
@@ -62,6 +62,12 @@ foreach ($unique_districts as $district) {
             echo "Sending alert to $user\n";
             $bot->sendMessage($user, $response_body, "HTML");
         } catch (Exception $exception) {
+            if ($exception->getCode() == 403) {
+                $block_user = $conn->prepare(
+                    "UPDATE subscriptions SET blocked = 1 WHERE telegram_id = ?"
+                );
+                $block_user->execute([$user]);
+            }
             file_put_contents(
                 "error.log",
                 Carbon::now() . " => " . $exception->getMessage() . PHP_EOL, FILE_APPEND

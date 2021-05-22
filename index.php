@@ -71,7 +71,10 @@ try {
         $set_data = $conn->prepare(
             "INSERT INTO subscriptions (district_id, telegram_id, first_name, username)
                 VALUES (?,?,?,?) ON DUPLICATE KEY
-                UPDATE district_id = VALUES(district_id), first_name = VALUES(first_name), username = VALUES(username)"
+                UPDATE district_id = VALUES(district_id),
+                       first_name = VALUES(first_name),
+                       username = VALUES(username),
+                       blocked = 0"
         );
         if ($set_data->execute([$district_id, $from, $name, $username])) {
             $bot->sendMessage($from, "You have successfully subscribed to alerts for your district. " .
