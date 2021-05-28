@@ -24,6 +24,15 @@ $bot = new BotApi($_ENV["BOT_TOKEN"]);
 $database = new database();
 $conn = $database->getConnection();
 
+if ($data->my_chat_member->new_chat_member->status === "kicked") {
+    $block_user = $conn->prepare(
+        "UPDATE subscriptions SET blocked = 1 WHERE telegram_id = ?"
+    );
+    $block_user->execute([$data->my_chat_member->chat->id]);
+    die("Blocked");
+}
+
+
 function starts_with($string, $startString): bool
 {
     $len = strlen($startString);
