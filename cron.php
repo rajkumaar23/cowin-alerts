@@ -42,8 +42,17 @@ foreach ($unique_districts as $district) {
                     $response_body .= "\n<b>{$center->name}</b> (<code>$center->fee_type</code>)\n";
                     $center_name_added = true;
                 }
-                $response_body .= "<code>{$session->available_capacity}</code> slots available on ";
-                $response_body .= "<code>{$session->date}</code> for <code>{$session->min_age_limit}+</code>\n";
+
+                if (!empty($session->available_capacity_dose1)) {
+                    $response_body .= "- Dose 1 : <code>{$session->available_capacity_dose1}</code> slots\n";
+                }
+                if (!empty($session->available_capacity_dose2)) {
+                    $response_body .= "- Dose 2 : <code>{$session->available_capacity_dose2}</code> slots\n";
+                }
+                $response_body .= "- Vaccine : <code>{$session->vaccine}</code>\n";
+                $response_body .= "- Date : <code>{$session->date}</code> \n";
+                $response_body .= "- Age limit : <code>{$session->min_age_limit}+</code>\n";
+                $response_body .= "\n";
             }
         }
     }
