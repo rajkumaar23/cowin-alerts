@@ -24,7 +24,7 @@ echo count($unique_districts) . " unique districts to process\n";
 foreach ($unique_districts as $district) {
     echo "Processing $district\n";
     $appointments = file_get_contents(
-        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id=$district&date="
+        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=$district&date="
         . date("d-m-Y")
     );
     sleep(5);
